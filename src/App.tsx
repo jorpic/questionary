@@ -7,40 +7,7 @@ import {h, Fragment} from "preact"
 import {useEffect, useState} from "preact/hooks"
 import cls from "classnames"
 
-const groups = [
-  { group: "Анонимность",
-    questions: [
-      { id: "q1",
-        title: "Вопрос1",
-        text: "Вопрос1"
-      },
-      { id: "q2",
-        title: "Вопрос2",
-        text: "Вопрос2"
-      },
-      { id: "q3",
-        title: "Вопрос3",
-        text: "Вопрос3"
-      },
-    ]
-  },
-  { group: "Отслеживаемость",
-    questions: [
-      { id: "r1",
-        title: "Вопрос1",
-        text: "Вопрос1"
-      },
-      { id: "r2",
-        title: "Вопрос2",
-        text: "Вопрос2"
-      },
-      { id: "r3",
-        title: "Вопрос3",
-        text: "Вопрос3"
-      },
-    ]
-  }
-]
+import questions from "./questions.yaml"
 
 
 export const App = () => {
@@ -48,13 +15,19 @@ export const App = () => {
   const [answers, _setAnswers] = useState({})
 
   const setAnswers = id => val =>
-    _setAnswers(Object.assign({[id]: val}, answers))
+    _setAnswers(Object.assign({}, answers, {[id]: val})
 
-    const total = groups
-      .map(({questions}) => questions.length)
+    const total = questions
+      .filter(x => !x.note)
+      .map(x => Object.values(x).flat().filter(y => !y.note).length)
       .reduce((a, b) => a + b, 0);
 
     const answered = Object.keys(answers).length
+
+    const doSave = () => {
+      fetch("/", {method: "POST", body: JSON.stringify(answers)})
+      .then(() => setDone(true))
+    }
 
   return [
     <nav class="navbar is-fixed-top" >
@@ -62,28 +35,33 @@ export const App = () => {
     </nav>,
 
     <div class="container is-max-desktop">
-      { groups.map(({group, questions}) =>
-        <div>
-          <h1 class="title">{group}</h1>
-          { questions.map(({id, title, text}) =>
-              <Question
-                id={id}
-                title={title}
-                text={text}
-                value={answers[id]}
-                onChange={setAnswers(id)}
-              />
-            )
-          }
-        </div>)
-      }
+      { questions.map(g => {
+        const [[key, val]] = Object.entries(g)
+        return (key == "note"
+          ? <p class="mb-2" dangerouslySetInnerHTML={{__html: val}}></p>
+          : <Fragment>
+            <h1 class="title">{key}</h1>
+            { val.map(q => {
+                const [[key, val]] = Object.entries(q)
+                return (key == "note"
+                  ? <p class="mb-2">{val}</p>
+                  : <Question
+                      title={key}
+                      text={val}
+                      value={answers[key]}
+                      onChange={setAnswers(key)}
+                    />)
+            })}
+          </Fragment>)
+      })}
 
       <div class="btn-send control mt-6">
         <button
           class="button is-dark is-medium is-fullwidth"
-          onClick={() => setDone(true)}
+          onClick={doSave}
+          disabled={total != answered}
         >
-          Отправить
+          { total == answered ? "Отправить" : "Нужно больше ответов" }
         </button>
       </div>
     </div>,
@@ -93,15 +71,13 @@ export const App = () => {
 }
 
 
-const Question = ({id, title, text, value, onChange}) =>
+const Question = ({title, text, value, onChange}) =>
   <article class="message">
-    <div class="message-header">
-      <p>{title}</p>
-    </div>
     <div class="message-body">
-      {text}
+      <b>{title}</b>
+      <p>{text}</p>
       <div class="control">
-        <Answer id={id} value={value} onChange={onChange}/>
+        <Answer id={title} value={value} onChange={onChange}/>
       </div>
     </div>
   </article>
@@ -113,7 +89,7 @@ const Answer = ({id, value, onChange}) =>
     { [ ["Да",       "is-success"],
         ["Нет",      "is-danger"],
         ["Не важно", "is-warning"],
-        ["Не знаю",  "is-info"]
+        ["Не знаю",  "is-info"],
       ].map(([val, color]) =>
         <div class="column">
           <Radio
@@ -148,7 +124,7 @@ const Bye = ({isActive}) => {
   return (
     <div class={pageloader}>
       <div class="title">
-        <h1>Спасибо! Ваше мнение важно для нас!</h1>
+        <h1>Спасибо! Ваше мнение достаточно важно для нас!</h1>
       </div>
     </div>
   );
