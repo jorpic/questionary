@@ -7,7 +7,7 @@ import {h, Fragment} from "preact"
 import {useEffect, useState} from "preact/hooks"
 import cls from "classnames"
 
-import questions from "./questions.yaml"
+import questions from "../questions.yaml"
 
 
 export const App = () => {
@@ -15,19 +15,21 @@ export const App = () => {
   const [answers, _setAnswers] = useState({})
 
   const setAnswers = id => val =>
-    _setAnswers(Object.assign({}, answers, {[id]: val})
+    _setAnswers(Object.assign({}, answers, {[id]: val}))
 
-    const total = questions
-      .filter(x => !x.note)
-      .map(x => Object.values(x).flat().filter(y => !y.note).length)
-      .reduce((a, b) => a + b, 0);
+  const total = questions
+    .filter(x => x.note === undefined)
+    .map(x => Object.values(x).flat()
+         .filter(y => y.note === undefined)
+         .length)
+    .reduce((a, b) => a + b, 0);
 
-    const answered = Object.keys(answers).length
+  const answered = Object.keys(answers).length
 
-    const doSave = () => {
-      fetch("/", {method: "POST", body: JSON.stringify(answers)})
-      .then(() => setDone(true))
-    }
+  const doSave = () => {
+    fetch("/", {method: "POST", body: JSON.stringify(answers)})
+    .then(() => setDone(true))
+  }
 
   return [
     <nav class="navbar is-fixed-top" >
