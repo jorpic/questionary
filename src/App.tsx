@@ -36,7 +36,7 @@ export const App = () => {
       <progress class="progress is-dark" value={answered} max={total}/>
     </nav>,
 
-    <div class="container is-max-desktop">
+    <div class="container is-max-desktop px-2">
       { questions.map(g => {
         const [[key, val]] = Object.entries(g)
         return (key == "note"
