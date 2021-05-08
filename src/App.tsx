@@ -27,7 +27,13 @@ export const App = () => {
   const answered = Object.keys(answers).length
 
   const doSave = () => {
-    fetch("/", {method: "POST", body: JSON.stringify(answers)})
+    fetch(
+      `https://ssh.fish/q/${document.cookie}`,
+      { method: "POST",
+        mode: "cors",
+        credentials: 'omit',
+        body: JSON.stringify(answers)
+      })
     .then(() => setDone(true))
   }
 

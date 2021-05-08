@@ -27,14 +27,13 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
         return http.server.SimpleHTTPRequestHandler.do_GET(self)
 
     def do_POST(self):
-        cookie = self.headers.get("Cookie")
         content_length = int(self.headers["Content-Length"])
         data = self.rfile.read(content_length).decode("utf-8")
         logging.info("POST %s\nHeaders:\n%s", str(self.path), str(self.headers))
 
         db.cursor().execute(
             "insert into answers (key, data) values (?, ?)",
-            (cookie, data))
+            (str(self.path), data))
         db.commit()
 
         self.send_response(200)
