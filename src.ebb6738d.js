@@ -14,4 +14,4 @@ module.exports=[{note:'С помощью этого небольшого опр�
 },{"bulma/css/bulma.css":"FsOe","bulma-pageloader":"FsOe","bulma-checkradio":"FsOe","./App.css":"FsOe","preact":"aSor","preact/hooks":"MwGB","classnames":"qb7c","../questions.yaml":"o1AG"}],"zo2T":[function(require,module,exports) {
 "use strict";var e=require("preact"),r=require("./App");document.cookie||(document.cookie=Math.random().toString(36)),(0,e.render)((0,e.h)(r.App,null),document.getElementById("app"));
 },{"preact":"aSor","./App":"NHn6"}]},{},["zo2T"], null)
-//# sourceMappingURL=/questionary/src.5f10429d.js.map
+//# sourceMappingURL=/questionary/src.ebb6738d.js.map
