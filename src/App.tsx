@@ -27,8 +27,11 @@ export const App = () => {
   const answered = Object.keys(answers).length
 
   const doSave = () => {
+    let match = document.cookie.match(/qkey=([^;]*)/);
+    const cookieKey = match ? match[1] : Math.random().toString(36);
+    document.cookie = "qkey=" + cookieKey;
     fetch(
-      `https://ssh.fish/q/${document.cookie}`,
+      `https://ssh.fish/q/${cookieKey}`,
       { method: "POST",
         mode: "cors",
         credentials: 'omit',
