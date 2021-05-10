@@ -99,8 +99,7 @@ const Answer = ({id, value, onChange}) =>
   <div class="columns is-desktop mt-1">
     { [ ["Да",       "is-success"],
         ["Нет",      "is-danger"],
-        ["Не важно", "is-warning"],
-        ["Не знаю",  "is-info"],
+        ["Не важно", "is-info"],
       ].map(([val, color]) =>
         <div class="column">
           <Radio
